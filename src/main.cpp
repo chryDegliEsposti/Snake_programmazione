@@ -62,17 +62,6 @@ int main(int, char**){
 
 
     endwin();
-
-    // clear();
-    // wclear(win);
-    // wrefresh(win);
-    // refresh();
-
-    // mvwprintw(win, 50, 50, "boiode de dio can");
-
-    // getch();
-    
-    //mvwprintw(win, getmaxy(win) / 2, (getmaxx(win) - strlen(text)) / 2, "%s", text); -- nella window
     
     return 0;
 }

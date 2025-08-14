@@ -55,6 +55,10 @@ levels::level* levels::getCurrLevel() {
     return curr;
 }
 
+levels::level* levels::getHead() {
+    return head;
+}
+
 levels::level* levels::goToLevel(int num) {
     levels::level* tmp = head;
 

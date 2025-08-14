@@ -23,6 +23,7 @@ class levels {
     level* nextLevel();
     level* beforeLevel();
     level* getCurrLevel();
+    level* getHead();
     level* goToLevel(int num);
     void printLevelList(const level* head);
 
