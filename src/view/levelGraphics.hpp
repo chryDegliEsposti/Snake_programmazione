@@ -11,8 +11,7 @@ class levelGraphics{
 
     public:
         levelGraphics();
-        void printLevel(levels::level *currLev);
-        void printAllLevel();
+        ~levelGraphics(); //distruttorre
         void level();
 
 };

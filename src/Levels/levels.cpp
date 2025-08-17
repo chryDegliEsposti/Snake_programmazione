@@ -62,14 +62,14 @@ levels::level* levels::getHead() {
 levels::level* levels::goToLevel(int num) {
     levels::level* tmp = head;
 
-    while(num != tmp->num && tmp->next){
-        tmp = tmp->next;
-
-        if(tmp && tmp->num == num) {
+    while (tmp) {
+        if (tmp->num == num) {
             curr = tmp;
             return curr;
         }
+        tmp = tmp->next;
     }
 
-    return nullptr;
+    return nullptr; // se non trovato
 }
+

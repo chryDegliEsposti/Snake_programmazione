@@ -4,6 +4,7 @@
 #include "Levels/levels.hpp"
 #include "view/mainMenu.hpp"
 #include "scoreBoard/ScoreBoard.hpp"
+#include "view/levelGraphics.hpp"
 
 #include <cstring>
 #include <ncurses.h>
@@ -54,15 +55,16 @@ int main(int, char**){
             scoreBoard::saveScore(0, dp, &toSerialize);
             scoreBoard::serialize(toSerialize);
         }if(choise == 2){
-            //TODO : implementare scelta livelli
-        }
+            levelGraphics *l = new levelGraphics();
+            l->level();
+        }   
 
         choise = mainMenu::mainPage();
     }
 
 
     endwin();
-    
+
     return 0;
 }
 

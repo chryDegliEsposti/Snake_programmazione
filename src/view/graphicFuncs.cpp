@@ -1,5 +1,6 @@
 
 #include "graphicFuncs.hpp"
+#include <ncurses.h>
 
 using namespace std;
 
@@ -35,6 +36,25 @@ void drawFilledCircle(int center_y, int center_x, int radius_x, int radius_y,int
             }
         }
         attroff(COLOR_PAIR(color));
+}
+
+void drawFilledCircleWin(WINDOW* win, int center_y, int center_x, int radius_x, int radius_y,int color) {
+    wattron(win, COLOR_PAIR(color));  //per settare il colore
+
+        for (int y = center_y - radius_y; y <= center_y + radius_y; y++) {
+            for (int x = center_x - radius_x; x <= center_x + radius_x; x++) {
+                //formula utilizzata = (x-x_center)^2/radius_x^2 + (y-y_center)^2/radius_y^2 >= 1 (formula ellisse)
+                double dx = x - center_x;
+                double dy = y - center_y;
+
+                if ((dx * dx) / (radius_x * radius_x) + 
+                    (dy * dy) / (radius_y * radius_y) < 1.0) {
+                    
+                    mvwaddch(win, y, x, ACS_BLOCK); 
+                }
+            }
+        }
+        wattroff(win, COLOR_PAIR(color));
 }
 
 /*

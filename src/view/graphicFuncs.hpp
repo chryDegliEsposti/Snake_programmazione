@@ -16,5 +16,6 @@ void endGame();
 WINDOW *new_bordered_window(int height, int width, int y, int x);
 
 void drawFilledCircle(int center_y, int center_x, int radius_x, int radius_y,int color) ;
+void drawFilledCircleWin(WINDOW* win, int center_y, int center_x, int radius_x, int radius_y,int color);
 
 #endif
