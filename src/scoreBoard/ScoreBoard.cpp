@@ -1,5 +1,6 @@
 #include "ScoreBoard.hpp"
 #include <cstdio>
+#include <cstring>
 #include <ncurses.h>
 
 void scoreBoard::serialize(scoreBoard scoreboard) {
@@ -21,101 +22,96 @@ void scoreBoard::deserialize(scoreBoard*scoreboard) {
 
 
 void scoreBoard::saveScore(int level, DataPlayer score, scoreBoard*scoreboard) {
-    DataPlayer tmp[6];
-    memset(&tmp, 0x00, sizeof(DataPlayer)*6);
-    DataPlayer t;
-    memset(&t, 0x00, sizeof(DataPlayer));
-    memcpy(tmp + 1, (*scoreboard).levelScores[level], sizeof(DataPlayer) * 5);
-    for(int i = 0; i < 5; i++) {
-        if(tmp[i+1].score < score.score) {
-            memcpy(&tmp[i], &score, sizeof(DataPlayer));
+    score.name[3] = '\0';
+
+    DataPlayer* top = scoreboard->levelScores[level];
+    int pos = 10;
+    for (int i = 0; i < 10; ++i) {
+        bool emptySlot = (top[i].name[0] == '\0' && top[i].score == 0);
+
+        if (emptySlot || score.score > top[i].score) {
+            pos = i;
             break;
         }
-        memcpy(&t, &tmp[i+1], sizeof(DataPlayer));
-        memcpy(&tmp[i+1], &tmp[i], sizeof(DataPlayer));
-        memcpy(&tmp[i], &t, sizeof(DataPlayer));
     }
-    memcpy((*scoreboard).levelScores[level], tmp, sizeof(DataPlayer)*5);
+
+    if (pos >= 10) {
+        return;
+    }
+
+    for (int j = 9; j > pos; --j) {
+        top[j] = top[j - 1];
+    }
+
+    top[pos] = score;
 }
 
 
-void scoreBoard::printData(scoreBoard scoreboard, int level, WINDOW* win){
-    
+void scoreBoard::printData(scoreBoard scoreboard, int level, WINDOW* win) {
+    if (!win) return;
+
     box(win, 0, 0);
+
+    int h, w;
+    getmaxyx(win, h, w);
+
+    // titolo centrato
+    char title[64];
+    std::snprintf(title, sizeof(title), " LEVEL %d SCORES ", level);
+    int title_x = (w - (int)std::strlen(title)) / 2;
+    if (title_x < 1) title_x = 1;
+    mvwprintw(win, 3, title_x, "%s", title);
+
+    const int left   = 2;
+    const int rank_c = left;
+    const int name_c = left + 6;
+    const int score_c = w - 10;
+
+    // header
+    mvwprintw(win, 5, rank_c,  "RANK");
+    mvwprintw(win, 5, name_c,  "NAME");
+    mvwprintw(win, 5, score_c, "SCORE");
+
+    // riga orizzontale sotto l'header
+    mvwhline(win, 6, 1, 0, w - 2);
+
+    for (int i = 0; i < 10; ++i) {
+        const DataPlayer& p = scoreboard.levelScores[level][i];
+
+        const char* name = (p.name[0] ? p.name : "---");
+
+        int row = 8 + i;
+
+        mvwprintw(win, row, rank_c,  "%d.", i + 1);
+        mvwprintw(win, row, name_c,  "%-3.3s", name);   // tanto e' sempre max 3 char di nome
+
+        mvwprintw(win, row, score_c, "%6d", p.score);
+    }
+
     wrefresh(win);
-    int max_x = getmaxx(stdscr);
-    int max_y = getmaxy(stdscr);
-
-    double scoreboardWidth = 7;
-    double winHeight = getmaxy(win);
-    double scoreboardHeight = winHeight*0.85;
-    double winWidth = getmaxx(win);
-
-    double x = winWidth/2 - scoreboardWidth/2;
-    double y = winHeight/2 - scoreboardHeight/2;
-
-    attroff(COLOR_PAIR(2));
-
-    mvwprintw(stdscr,max_y*0.1, max_x/2, "LEVEL %d SCORES",level );
-
-    for(int i = 4; i >= 0; i--){
-        mvwprintw(win, y*((i+1)*(scoreboardHeight/12)), x, "%s : %d", scoreboard.levelScores[level][i].name,scoreboard.levelScores[level][i].score );
-        wrefresh(win);
-    }
-    
-    refresh();
-    getch();
-
 }
 
-scoreBoard* scoreBoard::nextPage(scoreBoard *curr) {
-    if(curr->next) {
-        scoreBoard* tmp = curr;
-        curr = curr->next;
-        curr->before = tmp;
-        curr->id++;
-        return curr;
-    }
-    return curr;
-}
+void scoreBoard::openScoreBoard(scoreBoard scoreboard, int width, int height) {
+    int y = getmaxy(stdscr)/2-height/2;
+    int x = getmaxx(stdscr)/2-width/2;
 
-scoreBoard* scoreBoard::beforePage(scoreBoard *curr) {
-    if(curr->before) {
-        scoreBoard* tmp = curr;
-        curr = curr->before;
-        curr->next = tmp;
-        curr->id--;
-        return curr;
-    }
-    return curr;
-}
+    WINDOW* win = newwin(height, width, y, x);
+    keypad(win, TRUE);
+    curs_set(0);
 
-void scoreBoard::openScoreBoard(scoreBoard* startPage) {
-    scoreBoard* curr = startPage;
-
-    int ch;
-    WINDOW* win = newwin(20, 50, 5, 10);
-    keypad(win, TRUE);  //abilita i tasti (freccie)
-    curs_set(0);        //nasconde il cursore
+    int currentLevel = 0;
 
     while(true) {
         werase(win);
-        scoreBoard::printData(*curr, curr->id, win);
         box(win, 0, 0);
-        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit");
+        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit   |  Level: %d/29", currentLevel);
+        scoreBoard::printData(scoreboard, currentLevel, win);
         wrefresh(win);
 
-        ch = wgetch(win);
-        
-        if(ch == 'q' || ch == 'Q') {break;}
-
-        if(ch == KEY_LEFT && curr->before) {
-            beforePage(curr);
-        }
-
-        if(ch == KEY_RIGHT && curr->next) {
-            nextPage(curr);
-        }
+        int ch = wgetch(win);
+        if(ch == 'q' || ch == 'Q') break;
+        if(ch == KEY_LEFT && currentLevel > 0) currentLevel--;
+        if(ch == KEY_RIGHT && currentLevel < 29) currentLevel++;
     }
 
     delwin(win);

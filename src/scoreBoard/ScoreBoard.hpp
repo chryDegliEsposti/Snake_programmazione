@@ -20,22 +20,16 @@ class scoreBoard {
         char name[4];
         int score;
     };
-
-    DataPlayer levelScores[30][5];
+    DataPlayer levelScores[30][10];
 
 
     static void serialize(scoreBoard scoreboard);
     static void deserialize(scoreBoard*scoreboard);
     static void saveScore(int level, DataPlayer score, scoreBoard*scoreboard);
     static void printData(scoreBoard scoreboard, int level, WINDOW* win);
-    static scoreBoard* nextPage(scoreBoard* curr);
-    static scoreBoard* beforePage(scoreBoard* curr);
-    static void openScoreBoard(scoreBoard* startPage);
+    static void openScoreBoard(scoreBoard startPage, int width, int height);
 
     private:
-    scoreBoard* next;
-    scoreBoard* before;
-    int id;
 
 };
 

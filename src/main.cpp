@@ -14,52 +14,62 @@
 #include <time.h>
 #include <unistd.h>
 #include <ctime>
+#include <iostream>
+
+static scoreBoard::DataPlayer makeP(const char* n, int s) {
+    scoreBoard::DataPlayer p{};
+    std::strncpy(p.name, n, 3);
+    p.name[3] = '\0';
+    p.score = s;
+    return p;
+}
+
+void fillScoreboardWithDummyData() {
+    scoreBoard sb{};
+    for (int lvl = 0; lvl < 30; ++lvl) {
+        for (int i = 0; i < 10; ++i) {
+            char name[4] = { char('A' + (lvl % 26)), char('0' + i), '\0', '\0' };
+            int sc = (lvl+1) * 1000 - i*50;
+            scoreBoard::saveScore(lvl, makeP(name, sc), &sb);
+        }
+    }
+    scoreBoard::serialize(sb);
+}
 
 int main(int, char**){
+
+    // cri: niente sta roba e' per il debugger. potete toglierla se volete
+    std::cout << "PID: " << getpid() << "\n";
+    std::cin.get();
+
+
+
     srand(time(NULL));
     init();
     
-    int choise = mainMenu::mainPage();
+    int choice = mainMenu::mainPage(); 
 
-    while(choise != -1){
+    while(choice != -1){
         
-        if(choise == 0){
-            WINDOW*score = newwin(getmaxy(stdscr)*0.8,getmaxx(stdscr)*0.8, getmaxy(stdscr)*0.1,getmaxx(stdscr)*0.1);
-            wrefresh(score);
-            // scoreBoard s;
-            // memset(&s, 0x00, sizeof(scoreBoard));
-            // scoreBoard::DataPlayer p1 {"chr",2};
-            // scoreBoard::DataPlayer p2 {"ddd",5};
-            // scoreBoard::DataPlayer p3 {"sss",6};
-            // scoreBoard::DataPlayer p4{"cri",7};
-            // scoreBoard::DataPlayer p5 {"cnn",2};
-            // scoreBoard::saveScore(0, p1, &s);
-            // scoreBoard::saveScore(0, p2, &s);
-            // scoreBoard::saveScore(0, p3, &s);
-            // scoreBoard::saveScore(0, p4,  &s);
-            // scoreBoard::saveScore(0, p5,  &s);
-            // scoreBoard::serialize(s);
-            scoreBoard s2;
-            //memset(&s2, 0x00, sizeof(scoreBoard));
-            scoreBoard::deserialize(&s2);
-            attroff(COLOR_PAIR(2));
-            scoreBoard::printData(s2,0,score);
+        if(choice == 0){
+            scoreBoard sb{};
+            scoreBoard::deserialize(&sb);
+            scoreBoard::openScoreBoard(sb, 50, 20);
         }
-        if(choise == 1){
+        if(choice == 1){
             Game game;
-            int start = game.getMillis();
-            WINDOW*win = game.setBoard();
-            game.run(win, start);
-            scoreBoard::DataPlayer dp = game.gameOver(win);
+            WINDOW*win = game.setBoard(76, 24);
+            game.GameLoop(win);
+            /*scoreBoard::DataPlayer dp = game.gameOver(win);
             scoreBoard toSerialize;
             scoreBoard::saveScore(0, dp, &toSerialize);
-            scoreBoard::serialize(toSerialize);
-        }if(choise == 2){
+            scoreBoard::serialize(toSerialize);*/
+        }if(choice == 2){
             levelGraphics *l = new levelGraphics();
             l->level();
         }   
 
-        choise = mainMenu::mainPage();
+        choice = mainMenu::mainPage();
     }
 
 

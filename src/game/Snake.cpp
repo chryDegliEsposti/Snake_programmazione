@@ -1,5 +1,6 @@
 #include "Snake.hpp"
 #include <ncurses.h>
+#include "../debug/print.hpp"
 
 bool Snake::snake_move(char chinput, int*y, int*x) {
     switch (chinput) {
@@ -18,20 +19,17 @@ void Snake::initSnake(){
     for(int i = 0; i < snakeSize; i++) {
         Object*body = new Object{tail, y, x-i, 'o'};
         tail = body;
+        dbg::print_debug_hell_yeah("snake init #", i, " tail.x = ", tail->x);
     }
     this->cibo = new Object{nullptr, (int)(rand()%(height-2)), (int)(rand()%(width-2)), 'a'};
 }
-void Snake::setParam(){
-    int maxX = getmaxx(stdscr);
-    int maxY = getmaxy(stdscr);
-    this->height = maxY*0.8; 
-    this->width = maxX*0.8; 
+void Snake::setParam(int width, int height){
+    this->height = height; 
+    this->width = width; 
 }
 
 Snake::Snake(int snakeSize,int x, int y){
     this->snakeSize = snakeSize;
     this->x = x;
     this->y = y;
-    setParam();
-    initSnake();
 }

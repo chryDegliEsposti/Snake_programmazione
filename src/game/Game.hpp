@@ -25,14 +25,14 @@ class Game{
     int max_x,max_y;
     int width, height,score;
 
-    void run(WINDOW*win,int start);
-    WINDOW* setBoard();
-    int getMillis() ;
+    WINDOW* setBoard(int width, int height);
     scoreBoard::DataPlayer gameOver(WINDOW* win);
+    bool GameLoop(WINDOW* win);
 
     private: 
-    bool GameLoop(WINDOW* win, int gameStartMillis);
-    char getInput(WINDOW*win);
+    char inputAndMove(WINDOW*win, Snake snake);
+    bool checkTimer(int gameStartMillis);
+    bool run(WINDOW*win);
 };
 
 

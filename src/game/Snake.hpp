@@ -22,7 +22,7 @@ class Snake{
 
     bool snake_move(char chinput, int*y, int*x) ;
     void initSnake();
-    void setParam();
+    void setParam(int width, int height);
 
     
 };
