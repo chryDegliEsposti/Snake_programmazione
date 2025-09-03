@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
 #include "../debug/print.hpp"
 
 int getMillis() {
@@ -10,8 +12,23 @@ int getMillis() {
     return uint64_t(ts.tv_sec) * 1000 + ts.tv_nsec / 1000000;
 }
 
-Game::Game(): snake(3, 5, 5){
-    this->score = 0;
+static int deriveTickMsFromVel(int vel) {
+    // base 450ms, -12ms per punto vel, clamp a [60..600]
+    int ms = 450 - vel * 12;
+    return std::clamp(ms, 60, 600);
+}
+
+Game::Game(const levels::level* levelCfg) : snake(levelCfg ? levelCfg->snakelen : 3, 5, 5), score(0), levelCfg(levelCfg)
+{
+    if (levelCfg) {
+        currentLevelNum = levelCfg->num;
+        tickMs = deriveTickMsFromVel(levelCfg->vel);
+        bonusMult = levelCfg->bonus;
+    } else {
+        currentLevelNum = 1;
+        tickMs = 500;
+        bonusMult = 1.0f;
+    }
 }
 
 
@@ -84,10 +101,12 @@ bool Game::run(WINDOW*win){
         mvwprintw(win, temp->y, temp->x, "%c", temp->type);
     } while((temp = temp->next) != nullptr);
 
-    if(snake.head->x == snake.cibo->x && snake.head->y == snake.cibo->y) {
-        snake.cibo->y = (int)(rand()%(height-2))+2;
-        snake.cibo->x = (int)(rand()%(width-2))+2;
-        score++;
+    if (snake.head->x == snake.cibo->x && snake.head->y == snake.cibo->y) {
+        snake.cibo->y = (int)(rand() % (height - 2)) + 2;
+        snake.cibo->x = (int)(rand() % (width  - 2)) + 2;
+
+        int inc = std::max(1, (int)std::round(1.0f * bonusMult));
+        score += inc;
     }
 
     wrefresh(win);
@@ -95,13 +114,11 @@ bool Game::run(WINDOW*win){
     return true;
 }
 
-char getInput() {
-    int TIMEOUT = 500;
+char Game::getInput() {
     int start = getMillis();
     char lastInput = ERR;
-    timeout(0);
     int i = 0;
-    while((getMillis() - start) <= TIMEOUT) {
+    while((getMillis() - start) <= tickMs) {
         char temp = getch();
         if(temp != ERR)
             lastInput = temp;
@@ -110,16 +127,14 @@ char getInput() {
 }
 
 char Game::inputAndMove(Snake *snake) {
-    static char last_chinput = 'd';
-
     char chinput = getInput();
     
     if(chinput == ERR) {
-        chinput = last_chinput;
+        chinput = lastInput;
     }
     if(!snake->snake_move(chinput, &snake->y, &snake->x)) {
-        snake->snake_move(last_chinput, &snake->y, &snake->x);
-    } else last_chinput = chinput;
+        snake->snake_move(lastInput, &snake->y, &snake->x);
+    } else lastInput = chinput;
 
     return chinput;
 }
@@ -146,6 +161,7 @@ bool Game::checkTimer(int gameStartMillis) {
 }
 
 bool Game::GameLoop(WINDOW* win){
+    timeout(0);
     attroff(COLOR_PAIR(2));
     while(1) {
         int gameStartMillis = getMillis();
@@ -165,25 +181,22 @@ scoreBoard::DataPlayer Game::gameOver(WINDOW* win){
 
     box(win, 0, 0);
 
-    int textLen = strlen("    _____      ___      __  __  ______  ____ __      __ ______  _____  ");
-
-
-    mvwprintw(win, getmaxy(win)/2-6, (getmaxx(win)/2)-(textLen/2), R"(   _____      ___      __  __  ______  ____ __      __ ______  _____   )");
-    mvwprintw(win, getmaxy(win)/2-5, (getmaxx(win)/2)-(textLen/2), R"(  / ____|    /   \    |  \/  ||  ____|/ __ \\ \    / /|  ____||  __ \  )");
-    mvwprintw(win, getmaxy(win)/2-4, (getmaxx(win)/2)-(textLen/2), R"( | |  __    /  ^  \   | \  / || |__  | |  | |\ \  / / | |__   | |__) | )");
-    mvwprintw(win, getmaxy(win)/2-3, (getmaxx(win)/2)-(textLen/2), R"( | | |_ |  /  /_\  \  | |\/| ||  __| | |  | | \ \/ /  |  __|  |  _  /  )");
-    mvwprintw(win, getmaxy(win)/2-2, (getmaxx(win)/2)-(textLen/2), R"( | |__| | /  _____  \ | |  | || |____| |__| |  \  /   | |____ | | \ \  )");
-    mvwprintw(win, getmaxy(win)/2-1, (getmaxx(win)/2)-(textLen/2), R"(  \_____|/__/     \__\|_|  |_||______|\____/    \/    |______||_|  \_\ )");
+    mvwprintw(win, height/2-6, (width/2)-36, R"(   _____      ___      __  __  ______  ____ __      __ ______  _____   )");
+    mvwprintw(win, height/2-5, (width/2)-36, R"(  / ____|    /   \    |  \/  ||  ____|/ __ \\ \    / /|  ____||  __ \  )");
+    mvwprintw(win, height/2-4, (width/2)-36, R"( | |  __    /  ^  \   | \  / || |__  | |  | |\ \  / / | |__   | |__) | )");
+    mvwprintw(win, height/2-3, (width/2)-36, R"( | | |_ |  /  /_\  \  | |\/| ||  __| | |  | | \ \/ /  |  __|  |  _  /  )");
+    mvwprintw(win, height/2-2, (width/2)-36, R"( | |__| | /  _____  \ | |  | || |____| |__| |  \  /   | |____ | | \ \  )");
+    mvwprintw(win, height/2-1, (width/2)-36, R"(  \_____|/__/     \__\|_|  |_||______|\____/    \/    |______||_|  \_\ )");
 
     
-        echo();
-        mvwprintw(win, max_y*0.6, (getmaxx(win)/2-17), "insert your name to save score : ");
-        char str[4];
-        flushinp();    
-        wgetstr(win,str); 
-        strncpy(dp.name, str, 4);
-        dp.score = score;
-        noecho();
+    echo();
+    mvwprintw(win, height/2+1, (width/2-19), "insert your name to save score : ");
+    char str[4];
+    flushinp();    
+    wgetnstr(win,str, 3); 
+    strncpy(dp.name, str, 4);
+    dp.score = score;
+    noecho();
 
         // gameOver(win);
         // mvwprintw(win, max_y*0.6-2, max_x/2, "max 3 charachters");

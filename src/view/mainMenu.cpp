@@ -2,6 +2,7 @@
 #include "graphicFuncs.hpp"
 #include <ncurses.h>
 #include <cmath>
+#include "../debug/print.hpp"
 
 
 static WindowRegionNode windArr[100];
@@ -161,7 +162,8 @@ int mainMenu::page(int max_x,int max_y){
 
     repaintAll(max_x, max_y, numchoice);
     bool cont = true;
-    while ((c = getch()) != 'x') {
+    timeout(-1);
+    while ((c = getch()) != 'q') {
         switch (c) {
             case KEY_UP :
                 if(numchoice == 1 || numchoice == 2){

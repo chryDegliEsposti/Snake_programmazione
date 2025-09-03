@@ -5,11 +5,7 @@
 
 void scoreBoard::serialize(scoreBoard scoreboard) {
     ofstream out("scoreboard", ios::binary);
-    for(int i = 0; i < sizeof(levelScores); i++) {
-        char *s = (char*)(&scoreboard)+i;
-        out.write((char*)s, 1);
-        //printf("%x ", (char)*s);
-    }
+    out.write((char*)(char*)(&scoreboard), sizeof(levelScores));
     out.close();
 }
 
