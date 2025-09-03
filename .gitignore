@@ -1056,3 +1056,7 @@ app
 ./app
 
 .vscode/
+
+build/*
+app
+log.txt

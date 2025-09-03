@@ -30,7 +30,7 @@ class Game{
     bool GameLoop(WINDOW* win);
 
     private: 
-    char inputAndMove(WINDOW*win, Snake*snake);
+    char inputAndMove(Snake*snake);
     bool checkTimer(int gameStartMillis);
     bool run(WINDOW*win);
 };

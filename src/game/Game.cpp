@@ -10,7 +10,9 @@ int getMillis() {
     return uint64_t(ts.tv_sec) * 1000 + ts.tv_nsec / 1000000;
 }
 
-Game::Game(): snake(3, 5, 5){}
+Game::Game(): snake(3, 5, 5){
+    this->score = 0;
+}
 
 
 
@@ -93,14 +95,13 @@ bool Game::run(WINDOW*win){
     return true;
 }
 
-char getInput(WINDOW*win) {
+char getInput() {
     int TIMEOUT = 500;
     int start = getMillis();
     char lastInput = ERR;
     timeout(0);
     int i = 0;
     while((getMillis() - start) <= TIMEOUT) {
-        //mvwprintw(win, 0, 20, "%d", (getMillis() - start));
         char temp = getch();
         if(temp != ERR)
             lastInput = temp;
@@ -108,9 +109,10 @@ char getInput(WINDOW*win) {
     return lastInput;
 }
 
-char Game::inputAndMove(WINDOW* win, Snake *snake) {
+char Game::inputAndMove(Snake *snake) {
     static char last_chinput = 'd';
-    char chinput = getInput(win);
+
+    char chinput = getInput();
     
     if(chinput == ERR) {
         chinput = last_chinput;
@@ -123,20 +125,18 @@ char Game::inputAndMove(WINDOW* win, Snake *snake) {
 }
 
 bool Game::checkTimer(int gameStartMillis) {
-    dbg::print_debug_hell_yeah("millis: ",gameStartMillis);
+    dbg::print_debug_hell_yeah("millis: ",getMillis());
     uint64_t elapsed = getMillis() - gameStartMillis;
     int remaining = MAX_TIME - elapsed;
     if(remaining < 0) remaining = 0;
-
     int mm = (remaining / 1000) / 60;
     int ss = (remaining / 1000) % 60;
-    mvwprintw(stdscr, max_y*0.05, (max_x*0.1)+1,
-            "TIME : %02d:%02d", mm, ss);
-    mvwprintw(stdscr, max_y*0.05, (max_x*0.5),
-            "SCORE : %d", score);
-    mvwprintw(stdscr, max_y*0.9, (max_x*0.5)-2,
-            "LEVEL : %d", 1);
-    refresh();
+
+    int y = getmaxy(stdscr)/2-height/2-1;
+    mvwprintw(stdscr, y, getmaxx(stdscr)/2-width/2+2, "TIME : %02d:%02d", mm, ss);
+    mvwprintw(stdscr, y, getmaxx(stdscr)/2-5, "SCORE : %d", score);
+    mvwprintw(stdscr, y, getmaxx(stdscr)/2+width/2-12, "LEVEL : %d", 1);
+    wrefresh(stdscr);
 
     if (getMillis() - gameStartMillis >= MAX_TIME) {// tempo scaduto
         dbg::print_debug_hell_yeah("timeout!");
@@ -149,8 +149,8 @@ bool Game::GameLoop(WINDOW* win){
     attroff(COLOR_PAIR(2));
     while(1) {
         int gameStartMillis = getMillis();
-
-        inputAndMove(win, &snake);
+        
+        inputAndMove(&snake);
 
         if(!checkTimer(gameStartMillis)) return false;
 
