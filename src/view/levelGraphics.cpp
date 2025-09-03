@@ -4,14 +4,13 @@
 #include <algorithm>
 #include <cstddef>
 #include <ncurses.h>
+#include "../debug/print.hpp"
 
 #define maxLev 100
 const static int RADIUS_CIRCLE_X = 15;
 const static int RADIUS_CIRCLE_Y = 3;
 
 //WINDOW *my_pad = newpad(righe_totali, colonne_totali); TODO: usare questo per la finesgtra scorrevole
-
-
 
 levelGraphics::levelGraphics(){
     getmaxyx(stdscr, this->maxy, this->maxx);
@@ -31,6 +30,7 @@ void levelGraphics::level() {
 
     // Disegno tutti i livelli nel pad
     for (int i = 1; i <= maxLev; i++) {
+        //dbg::print_debug_hell_yeah("I: %d",i);
         currLev = this->l->goToLevel(i);
         if (!currLev) continue;
         drawFilledCircleWin(my_pad,i * levelHeight, maxx / 2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 1);

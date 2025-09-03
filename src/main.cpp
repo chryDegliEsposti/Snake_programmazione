@@ -56,7 +56,7 @@ int main(int, char**){
             scoreBoard::deserialize(&sb);
             scoreBoard::openScoreBoard(sb, 50, 20);
         }
-        if(choice == 1){
+        if(choice == 1){  
             Game game;
             WINDOW*win = game.setBoard(76, 24);
             game.GameLoop(win);

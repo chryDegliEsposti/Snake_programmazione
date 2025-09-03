@@ -1,4 +1,5 @@
 #include "Game.hpp"
+#include <cstdint>
 #include <fstream>
 #include <iostream>
 #include "../debug/print.hpp"
@@ -35,7 +36,6 @@ bool Game::run(WINDOW*win){
         
     mvwprintw(win, snake.cibo->y, snake.cibo->x, "%c", snake.cibo->type);
     wrefresh(win);
-
 
     if(snake.x >= width-1 || snake.y >= height-1 || snake.x <= 0 || snake.y <= 0) {
         
@@ -108,21 +108,22 @@ char getInput(WINDOW*win) {
     return lastInput;
 }
 
-char Game::inputAndMove(WINDOW* win, Snake snake) {
+char Game::inputAndMove(WINDOW* win, Snake *snake) {
     static char last_chinput = 'd';
     char chinput = getInput(win);
     
     if(chinput == ERR) {
         chinput = last_chinput;
     }
-    if(!snake.snake_move(chinput, &snake.y, &snake.x)) {
-        snake.snake_move(last_chinput, &snake.y, &snake.x);
+    if(!snake->snake_move(chinput, &snake->y, &snake->x)) {
+        snake->snake_move(last_chinput, &snake->y, &snake->x);
     } else last_chinput = chinput;
 
     return chinput;
 }
 
 bool Game::checkTimer(int gameStartMillis) {
+    dbg::print_debug_hell_yeah("millis: ",gameStartMillis);
     uint64_t elapsed = getMillis() - gameStartMillis;
     int remaining = MAX_TIME - elapsed;
     if(remaining < 0) remaining = 0;
@@ -135,7 +136,7 @@ bool Game::checkTimer(int gameStartMillis) {
             "SCORE : %d", score);
     mvwprintw(stdscr, max_y*0.9, (max_x*0.5)-2,
             "LEVEL : %d", 1);
-    wrefresh(stdscr);
+    refresh();
 
     if (getMillis() - gameStartMillis >= MAX_TIME) {// tempo scaduto
         dbg::print_debug_hell_yeah("timeout!");
@@ -145,10 +146,11 @@ bool Game::checkTimer(int gameStartMillis) {
 }
 
 bool Game::GameLoop(WINDOW* win){
-    int gameStartMillis = getMillis();
     attroff(COLOR_PAIR(2));
     while(1) {
-        inputAndMove(win, snake);
+        int gameStartMillis = getMillis();
+
+        inputAndMove(win, &snake);
 
         if(!checkTimer(gameStartMillis)) return false;
 

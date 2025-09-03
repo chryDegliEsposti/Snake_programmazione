@@ -15,7 +15,7 @@ void mainMenu::init_colorPairs() {
     init_color(COLOR_DARK_GREEN, 75,378, 154 );
     init_pair(1, COLOR_GREEN,  COLOR_GREEN);   // green
     init_pair(2, COLOR_WHITE,  COLOR_WHITE);     // White
-    init_pair(3, COLOR_BLACK,  COLOR_BLACK);     // Black (for details like eyes)
+    init_pair(3, COLOR_BLACK,  COLOR_BLACK);     // Black
     init_pair(4, COLOR_RED,    COLOR_RED);       // red 
     init_pair(5, COLOR_DARK_GREEN, COLOR_DARK_GREEN);
     init_pair(6, COLOR_BLACK, COLOR_DARK_GREEN);
