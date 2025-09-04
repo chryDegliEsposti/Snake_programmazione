@@ -13,6 +13,8 @@
 #include <ctime>
 #include <iostream>
 
+#define LEVEL_NUMBER 15
+
 static scoreBoard::DataPlayer makeP(const char* n, int s) {
     scoreBoard::DataPlayer p{};
     std::strncpy(p.name, n, 3);
@@ -36,11 +38,9 @@ void fillScoreboardWithDummyData() {
 int main(int, char**) {
     // debug
     std::cout << "PID: " << getpid() << "\n";
-    // std::cin.get();
+    std::cin.get();
 
-    // CREA qui la lista livelli e passala alla UI
-    constexpr int kMaxLevels = 30;
-    levels lvlList{kMaxLevels};
+    levels lvlList{LEVEL_NUMBER};
     levels::level* currentLevel = lvlList.goToLevel(1);
 
     srand(time(NULL));
@@ -52,10 +52,9 @@ int main(int, char**) {
     while (choice != -1) {
 
         if (choice == 0) {
-            fillScoreboardWithDummyData();
             scoreBoard sb{};
             scoreBoard::deserialize(&sb);
-            scoreBoard::openScoreBoard(sb, 50, 20);
+            scoreBoard::openScoreBoard(sb, 50, 20, LEVEL_NUMBER);
         }
 
         if (choice == 1) {

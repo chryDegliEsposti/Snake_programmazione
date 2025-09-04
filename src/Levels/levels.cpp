@@ -14,18 +14,17 @@ void levels::addLevel(int num, int vel, float bonus, int snakelen) {
 }
 
 void levels::addAllLevels(int numLastLevel) {
-    // parametri iniziali – cambiali se vuoi uno scaling diverso
     int   currNum  = 1;
-    int   vel      = 10;
+    float vel      = 10;
     float bonus    = 1.2f;
-    int   snakelen = 5;
+    float snakelen = 3;
 
     while (currNum <= numLastLevel) {
-        addLevel(currNum, vel, bonus, snakelen);
+        addLevel(currNum, (int)vel, bonus, (int)snakelen);
         ++currNum;
-        vel      += 5;
+        vel      += 3;
         bonus    += 0.2f;
-        ++snakelen;
+        snakelen+=0.75;
     }
 }
 

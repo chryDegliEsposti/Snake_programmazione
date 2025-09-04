@@ -4,7 +4,6 @@
 #include <algorithm>
 #include <ncurses.h>
 
-#define maxLev 30
 static const int RADIUS_CIRCLE_X = 15;
 static const int RADIUS_CIRCLE_Y = 3;
 

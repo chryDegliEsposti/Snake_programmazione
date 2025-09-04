@@ -46,8 +46,15 @@ void Snake::initSnake(){
         tail = body;
         dbg::print_debug_hell_yeah("snake init #", i, " tail.x = ", tail->x);
     }
-    this->cibo = new Object{nullptr, (int)(rand()%(height-2)+2), (int)(rand()%(width-2)+2), 'a'};
+    this->cibo = new Object{nullptr, 0, 0, 'a'};
+    generateFood();
 }
+
+void Snake::generateFood() {
+    this->cibo->y = (int)(rand() % (height - 2)) + 1;
+    this->cibo->x = (int)(rand() % (width  - 2)) + 1;
+}
+
 void Snake::setParam(int width, int height){
     this->height = height; 
     this->width = width; 

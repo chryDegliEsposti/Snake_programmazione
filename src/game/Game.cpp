@@ -8,6 +8,8 @@
 #include <ncurses.h>
 #include "../debug/print.hpp"
 
+bool Game::isRunning = true;
+
 int getMillis() {
     struct timespec ts;
     timespec_get(&ts, TIME_UTC);
@@ -16,12 +18,13 @@ int getMillis() {
 
 static int deriveTickMsFromVel(int vel) {
     // base 400ms, - 6ms per punto vel, clamp a [5..600]
-    int ms = 400 - vel * 6;
-    return std::clamp(ms, 5, 600); //clamp assicura che ms rimanda nel range selezionato 
+    int ms = 450 - vel * 8;
+    return ms;
 }
 //TOUNDERSTAND
 Game::Game(const levels::level* levelCfg) : snake(levelCfg ? levelCfg->snakelen : 3, 5, 5), score(0), levelCfg(levelCfg)
 {
+    Game::isRunning = true;
     if (levelCfg) {
         currentLevelNum = levelCfg->num;
         tickMs = deriveTickMsFromVel(levelCfg->vel);
@@ -107,8 +110,7 @@ bool Game::run(WINDOW*win){
     } while((temp = temp->next) != nullptr);
 
     if (snake.head->x == snake.cibo->x && snake.head->y == snake.cibo->y) {
-        snake.cibo->y = (int)(rand() % (height - 2)) + 2;
-        snake.cibo->x = (int)(rand() % (width  - 2)) + 2;
+        snake.generateFood();
 
         int inc = std::max(1, (int)std::round(1.0f * bonusMult));
         score += inc;
@@ -135,8 +137,8 @@ void Game::PauseGame(WINDOW* win) {
     char c;
     while((c = getch()) != 'p') {
         if(c == 'q'){
-            clear();
-            refresh();
+            Game::isRunning = false;
+            break;
         }
     }
 
@@ -150,6 +152,8 @@ char Game::getInput() {
     int start = getMillis();
     char lastInput = ERR;
     int i = 0;
+    
+    dbg::print_debug_hell_yeah(tickMs);
     while((getMillis() - start) <= tickMs) {
         char temp = getch();
         if(temp != ERR)
@@ -200,7 +204,7 @@ bool Game::GameLoop(WINDOW* win, WINDOW* coverBox){
     timeout(0);
     attroff(COLOR_PAIR(2));
     int gameStartMillis = getMillis();
-    while(1) {
+    while(Game::isRunning) {
         
         inputAndMove(&snake,win);
 

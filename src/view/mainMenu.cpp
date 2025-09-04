@@ -3,6 +3,9 @@
 #include <ncurses.h>
 #include <cmath>
 #include "../debug/print.hpp"
+#include <sstream>
+#include <string>
+#include <iostream>
 
 
 static WindowRegionNode windArr[100];
@@ -64,54 +67,53 @@ void mainMenu::drawSnake(int originY, int originX, int numBodySegments) {
     }
 }
 
+void printArt(const char *art, int x, int y, bool selected) {
+    attron(COLOR_PAIR(7-selected));
+
+    size_t start = 0;
+    int line = 0;
+    size_t len = strlen(art);
+
+    for(size_t i = 0; i <= len; ++i) {
+        if(i == len || art[i] == '\n') {
+            int l = (int)(i - start);
+            if (l > 0)
+                mvwprintw(stdscr, y + line, x, "%.*s", l, art + start);
+            else
+                mvwprintw(stdscr, y + line, x, "");
+            line++;
+            start = i + 1;
+        }
+    }
+
+    attroff(COLOR_PAIR(7-selected));
+}
+
 void mainMenu::repaintAll(int max_x, int max_y, int selected){
-    
     for (int i = 0; i < 3; i++) {
         int pair_id = (i == selected ? 5 : 1);
         drawFilledCircle(windArr[i].posY, windArr[i].posX, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, pair_id);
     }
 
+    printArt(
+" ___  ___ ___  ___ ___ \n"
+"/ __|/ __/ _ \\| _ \\ __|\n"
+"\\__ \\ (_| (_) |   / _| \n"//23
+"|___/\\___\\___/|_|_\\___|", windArr[0].posX-11, windArr[0].posY-2, selected == 0);
 
-    
+    printArt(
+" _____ __    _____ __ __\n"
+"|  _  |  |  |  _  |  |  |\n"
+"|   __|  |__|     |_   _|\n"//25
+"|__|  |_____|__|__| |_|", windArr[1].posX-12, windArr[1].posY-2, selected == 1);
 
-    attron(COLOR_PAIR(selected == 1 ? 6 : 7));
-
-
-    std::string arr[][4] = {
-{
-" ___  ___ ___  ___ ___ ",
-"/ __|/ __/ _ \\| _ \\ __|",
-" \\__ \\ (_| (_) |   / _| ",
-" |___/\\___\\___/|_|_\\___|"
-},
-{
-" _____ __    _____ __ __",
-"|  _  |  |  |  _  |  |  |",
-"|   __|  |__|     |_   _|",
-"|__|  |_____|__|__| |_|"
-},
-{
- " _    _____   _____ _  "  ,
- "| |  | __\\ \\ / / __| |"   ,
- "| |__| _| \\ V /| _|| |__" ,
- "|____|___| \\_/ |___|____|"                         
-}
-    };
-    for(int i = 0; i < 3; i++){
-        int y = windArr[i].posY;
-        for(std::string s : arr[i]){
-            mvwprintw( stdscr, y-2, windArr[i].posX, s.c_str());
-            y++;
-        }
-    }
-
-
-                        
-
-    attroff(COLOR_PAIR(selected == 2 ? 6 : 7));
+    printArt(
+" _    _____   _____ _  \n"
+"| |  | __\\ \\ / / __| |\n"
+"| |__| _| \\ V /| _|| |__\n"//25
+"|____|___| \\_/ |___|____|\n", windArr[2].posX-11, windArr[2].posY-2, selected == 2);
 
     refresh();
-
 }
 
 void mainMenu::drawVerticalSnake(int startY) {

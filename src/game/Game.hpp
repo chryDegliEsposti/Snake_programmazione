@@ -19,8 +19,7 @@
 
 class Game{
 public:
-    // ⇨ passa il livello corrente (può essere nullptr; gestiamo default)
-    explicit Game(const levels::level* levelCfg);
+    Game(const levels::level* levelCfg);
 
     char lastInput = 'd';
 
@@ -29,6 +28,8 @@ public:
     Snake snake;
     int max_x, max_y;
     int width, height, score;
+
+    static bool isRunning;
 
     // info livello
     const levels::level* levelCfg = nullptr; // non-owning
@@ -43,6 +44,7 @@ public:
     void mainMenuHandler(levels::level* currentLevel,levels lvlList);
 
 private:
+
     // timeout di input dipende dal livello
     char getInput();
     char inputAndMove(Snake* snake, WINDOW* win);

@@ -25,6 +25,7 @@ class Snake{
     bool snake_move(char chinput, char lastinput, int*y, int*x, WINDOW* win) ;
     void initSnake();
     void setParam(int width, int height);
+    void generateFood();
 
     
 };

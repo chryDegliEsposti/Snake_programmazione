@@ -87,7 +87,7 @@ void scoreBoard::printData(scoreBoard scoreboard, int level, WINDOW* win) {
     wrefresh(win);
 }
 
-void scoreBoard::openScoreBoard(scoreBoard scoreboard, int width, int height) {
+void scoreBoard::openScoreBoard(scoreBoard scoreboard, int width, int height, int maxLevels) {
     int y = getmaxy(stdscr)/2-height/2;
     int x = getmaxx(stdscr)/2-width/2;
 
@@ -100,14 +100,14 @@ void scoreBoard::openScoreBoard(scoreBoard scoreboard, int width, int height) {
     while(true) {
         werase(win);
         box(win, 0, 0);
-        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit   |  Level: %d/29", currentLevel);
+        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit   |  Level: %d/%d", currentLevel, maxLevels-1);
         scoreBoard::printData(scoreboard, currentLevel, win);
         wrefresh(win);
 
         int ch = wgetch(win);
         if(ch == 'q' || ch == 'Q') break;
         if(ch == KEY_LEFT && currentLevel > 0) currentLevel--;
-        if(ch == KEY_RIGHT && currentLevel < 29) currentLevel++;
+        if(ch == KEY_RIGHT && currentLevel < maxLevels-1) currentLevel++;
     }
 
     delwin(win);

@@ -27,8 +27,7 @@ class scoreBoard {
     static void deserialize(scoreBoard*scoreboard);
     static void saveScore(int level, DataPlayer score, scoreBoard*scoreboard);
     static void printData(scoreBoard scoreboard, int level, WINDOW* win);
-    static void openScoreBoard(scoreBoard startPage, int width, int height);
-
+    static void openScoreBoard(scoreBoard scoreboard, int width, int height, int maxLevels);
     private:
 
 };
