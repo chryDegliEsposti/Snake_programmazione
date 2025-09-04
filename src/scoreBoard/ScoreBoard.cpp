@@ -95,19 +95,19 @@ void scoreBoard::openScoreBoard(scoreBoard scoreboard, int width, int height, in
     keypad(win, TRUE);
     curs_set(0);
 
-    int currentLevel = 0;
+    int currentLevel = 1;
 
     while(true) {
         werase(win);
         box(win, 0, 0);
-        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit   |  Level: %d/%d", currentLevel, maxLevels-1);
+        mvwprintw(win, 1, 2, "<- Prev | Next ->  |  q: Quit   |  Level: %d/%d", currentLevel, maxLevels);
         scoreBoard::printData(scoreboard, currentLevel, win);
         wrefresh(win);
 
         int ch = wgetch(win);
         if(ch == 'q' || ch == 'Q') break;
-        if(ch == KEY_LEFT && currentLevel > 0) currentLevel--;
-        if(ch == KEY_RIGHT && currentLevel < maxLevels-1) currentLevel++;
+        if(ch == KEY_LEFT && currentLevel > 1) currentLevel--;
+        if(ch == KEY_RIGHT && currentLevel < maxLevels) currentLevel++;
     }
 
     delwin(win);
