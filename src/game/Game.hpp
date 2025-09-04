@@ -38,13 +38,15 @@ public:
 
     WINDOW* setBoard(int width, int height);
     scoreBoard::DataPlayer gameOver(WINDOW* win);
-    bool GameLoop(WINDOW* win);
+    bool GameLoop(WINDOW* win, WINDOW* coverBox);
+    static void PauseGame(WINDOW* win);
+    void mainMenuHandler(levels::level* currentLevel,levels lvlList);
 
 private:
     // timeout di input dipende dal livello
     char getInput();
-    char inputAndMove(Snake* snake);
-    bool checkTimer(int gameStartMillis);
+    char inputAndMove(Snake* snake, WINDOW* win);
+    bool checkTimer(int gameStartMillis,WINDOW* coverBox);
     bool run(WINDOW* win);
 };
 

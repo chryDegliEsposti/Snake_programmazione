@@ -34,7 +34,7 @@ void fillScoreboardWithDummyData() {
 }
 
 int main(int, char**) {
-    // debug opzionale
+    // debug
     std::cout << "PID: " << getpid() << "\n";
     // std::cin.get();
 
@@ -52,16 +52,27 @@ int main(int, char**) {
     while (choice != -1) {
 
         if (choice == 0) {
-            //fillScoreboardWithDummyData();
+            fillScoreboardWithDummyData();
             scoreBoard sb{};
             scoreBoard::deserialize(&sb);
             scoreBoard::openScoreBoard(sb, 50, 20);
         }
 
         if (choice == 1) {
+            int width = 76;
+            int height = 24;
+            int y = getmaxy(stdscr)/2-height/2;
+            int x = getmaxx(stdscr)/2-width/2;
+
             Game game(currentLevel);
+            WINDOW* blackCover = newwin(getmaxy(stdscr), width, 0, x);
+
+            wrefresh(blackCover);
             WINDOW* win = game.setBoard(76, 24);
-            game.GameLoop(win);
+            game.GameLoop(win,blackCover);
+
+            wclear(blackCover);
+            
             scoreBoard::DataPlayer dp = game.gameOver(win);
             scoreBoard toSerialize;
             // usa currentLevel->num se vuoi salvare per livello

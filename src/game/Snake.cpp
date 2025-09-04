@@ -1,17 +1,42 @@
 #include "Snake.hpp"
 #include <ncurses.h>
 #include "../debug/print.hpp"
+#include "Game.hpp"
 
-bool Snake::snake_move(char chinput, int*y, int*x) {
+bool Snake::snake_move(char chinput, char lastinput, int*y, int*x, WINDOW* win) {
     switch (chinput) {
-        case 'w': (*y)--; break;
-        case 's': (*y)++; break;
-        case 'a': (*x)--; break;
-        case 'd': (*x)++; break;
-        default:    return false;
+        case 'w': 
+            if(lastinput != 's') {
+                (*y)--; 
+                return true;
+            }
+            return false;
+        case 's': 
+            if(lastinput != 'w') {
+                (*y)++; 
+                return true;
+            }
+            return false;
+        case 'a': 
+            if(lastinput != 'd') {
+                (*x)--; 
+                return true;
+            }
+            return false;
+        case 'd': 
+            if(lastinput != 'a') {
+                (*x)++; 
+                return true;
+            }
+            return false;
+        case 'p':
+            Game::PauseGame(win);
+            return false;
+        default: return false;
     }
     return true;
 }
+
 
 void Snake::initSnake(){
     this->head = new Object{nullptr, y, x, 'O'};

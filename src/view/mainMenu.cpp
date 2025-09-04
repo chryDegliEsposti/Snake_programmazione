@@ -12,7 +12,7 @@ const static int RADIUS_CIRCLE_Y = 3;
 
 
 void mainMenu::init_colorPairs() {
-    //fare paring color dark green 
+    //fare paring colori 
     init_color(COLOR_DARK_GREEN, 75,378, 154 );
     init_pair(1, COLOR_GREEN,  COLOR_GREEN);   // green
     init_pair(2, COLOR_WHITE,  COLOR_WHITE);     // White
@@ -21,6 +21,7 @@ void mainMenu::init_colorPairs() {
     init_pair(5, COLOR_DARK_GREEN, COLOR_DARK_GREEN);
     init_pair(6, COLOR_BLACK, COLOR_DARK_GREEN);
     init_pair(7, COLOR_BLACK, COLOR_GREEN);
+    init_pair(8, COLOR_WHITE, COLOR_BLACK);
 }
 
 

@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <ncurses.h>
 #include "../debug/print.hpp"
 
 int getMillis() {
@@ -114,6 +115,31 @@ bool Game::run(WINDOW*win){
     return true;
 }
 
+void Game::PauseGame(WINDOW* win) {
+    WINDOW* pauseMenu = newwin(16, 32, getmaxy(stdscr)/2-8, getmaxx(stdscr)/2-16);
+
+    box(pauseMenu, 0, 0);
+    mvwprintw(pauseMenu, 2, getmaxx(pauseMenu)/2-3, "PAUSE");
+    mvwprintw(pauseMenu, 3, 1, "______________________________");
+    mvwprintw(pauseMenu, getmaxy(pauseMenu)/2-2, getmaxx(pauseMenu)/2-4, "q : quit");
+    mvwprintw(pauseMenu, getmaxy(pauseMenu)/2+2, getmaxx(pauseMenu)/2-5, "p : resume");
+    wrefresh(pauseMenu);
+
+    //mvwprintw(pauseMenu, int, int, "p : resume");
+    char c;
+    while((c = getch()) != 'p') {
+        if(c == 'q'){
+            clear();
+            refresh();
+        }
+    }
+
+
+    wclear(pauseMenu);
+    wrefresh(pauseMenu);
+    box(win, 0, 0);
+}
+
 char Game::getInput() {
     int start = getMillis();
     char lastInput = ERR;
@@ -126,32 +152,36 @@ char Game::getInput() {
     return lastInput;
 }
 
-char Game::inputAndMove(Snake *snake) {
+char Game::inputAndMove(Snake *snake, WINDOW* win) {
     char chinput = getInput();
     
     if(chinput == ERR) {
         chinput = lastInput;
     }
-    if(!snake->snake_move(chinput, &snake->y, &snake->x)) {
-        snake->snake_move(lastInput, &snake->y, &snake->x);
+    if(!snake->snake_move(chinput,lastInput, &snake->y, &snake->x, win)) {
+        snake->snake_move(lastInput,lastInput, &snake->y, &snake->x, win);
     } else lastInput = chinput;
 
     return chinput;
 }
 
-bool Game::checkTimer(int gameStartMillis) {
+bool Game::checkTimer(int gameStartMillis,WINDOW* coverBox) {
+
     dbg::print_debug_hell_yeah("millis: ",getMillis());
     uint64_t elapsed = getMillis() - gameStartMillis;
     int remaining = MAX_TIME - elapsed;
     if(remaining < 0) remaining = 0;
+    dbg::print_debug_hell_yeah("remaining: ",remaining);
     int mm = (remaining / 1000) / 60;
     int ss = (remaining / 1000) % 60;
+    dbg::print_debug_hell_yeah("mm: ",mm);
+    dbg::print_debug_hell_yeah("ss: ",ss);
 
     int y = getmaxy(stdscr)/2-height/2-1;
-    mvwprintw(stdscr, y, getmaxx(stdscr)/2-width/2+2, "TIME : %02d:%02d", mm, ss);
-    mvwprintw(stdscr, y, getmaxx(stdscr)/2-5, "SCORE : %d", score);
-    mvwprintw(stdscr, y, getmaxx(stdscr)/2+width/2-12, "LEVEL : %d", 1);
-    wrefresh(stdscr);
+    mvwprintw(coverBox, y, getmaxx(coverBox)/2-width/2+2, "TIME : %02d:%02d", mm, ss);
+    mvwprintw(coverBox, y, getmaxx(coverBox)/2-5, "SCORE : %d", score);
+    mvwprintw(coverBox, y, getmaxx(coverBox)/2+width/2-12, "LEVEL : %d", currentLevelNum);
+    wrefresh(coverBox);
 
     if (getMillis() - gameStartMillis >= MAX_TIME) {// tempo scaduto
         dbg::print_debug_hell_yeah("timeout!");
@@ -160,15 +190,15 @@ bool Game::checkTimer(int gameStartMillis) {
     return true;
 }
 
-bool Game::GameLoop(WINDOW* win){
+bool Game::GameLoop(WINDOW* win, WINDOW* coverBox){
     timeout(0);
     attroff(COLOR_PAIR(2));
+    int gameStartMillis = getMillis();
     while(1) {
-        int gameStartMillis = getMillis();
         
-        inputAndMove(&snake);
+        inputAndMove(&snake,win);
 
-        if(!checkTimer(gameStartMillis)) return false;
+        if(!checkTimer(gameStartMillis,coverBox)) return false;
 
         if(!run(win)) return false;
     }

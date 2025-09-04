@@ -2,6 +2,8 @@
 #define SNAKE_HPP
 
 #include <stdlib.h>
+#include <ncurses.h>
+
     struct Object {
         Object*next;
         int y;
@@ -20,7 +22,7 @@ class Snake{
     Object *tail;
     Object *cibo;
 
-    bool snake_move(char chinput, int*y, int*x) ;
+    bool snake_move(char chinput, char lastinput, int*y, int*x, WINDOW* win) ;
     void initSnake();
     void setParam(int width, int height);
 
