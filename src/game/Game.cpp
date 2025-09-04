@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cmath>
+#include <istream>
 #include <ncurses.h>
 #include "../debug/print.hpp"
 
@@ -57,20 +58,36 @@ bool Game::run(WINDOW*win){
     mvwprintw(win, snake.cibo->y, snake.cibo->x, "%c", snake.cibo->type);
     wrefresh(win);
 
-    if(snake.x >= width-1 || snake.y >= height-1 || snake.x <= 0 || snake.y <= 0) {
+    // if(snake.x >= width-1 || snake.y >= height-1 || snake.x <= 0 || snake.y <= 0) {
         
-        dbg::print_debug_hell_yeah("x=", snake.x, " y=", snake.y, " w=", width, " h=", height);
-        snake.x = snake.head->x;
-        snake.y = snake.head->y;
-        return false;
+    //     dbg::print_debug_hell_yeah("x=", snake.x, " y=", snake.y, " w=", width, " h=", height);
+
+    //     snake.x = snake.head->x;
+    //     snake.y = snake.head->y;
+        
+    // }
+    ///dbg::print_debug_hell_yeah("snake x=", snake.x, " snake y=", snake.y, " head x =", snake.head->x, " head y=", snake.head->y);
+    
+    if(snake.x >= width-1){
+        snake.x = 1;
     }
+    if(snake.x <= 0){
+        snake.x = width-2;
+    }
+    if(snake.y >= height-1){
+        snake.y = 1;
+    }
+    if(snake.y <= 0){
+        snake.y = height-2;
+    }
+
     
     Object* temp = snake.tail;
 
     do {
         dbg::print_debug_hell_yeah("checking tail ", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
         if(temp->next == nullptr) break;
-        dbg::print_debug_hell_yeah("isnull ", temp->next->x); // TODO: bug sull'init del serpente imho
+        dbg::print_debug_hell_yeah("isnull ", temp->next->x); 
         if(temp->x == snake.x && temp->y == snake.y) {
             dbg::print_debug_hell_yeah("tailBitten", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
             snake.x = snake.head->x;
@@ -93,9 +110,6 @@ bool Game::run(WINDOW*win){
     snake.head->type = 'o';
 
     snake.head = snake.head->next;
-    
-    //wclear(win);
-    //box(win, ':', '=');
 
     temp = snake.tail;
     do {
@@ -109,6 +123,8 @@ bool Game::run(WINDOW*win){
         int inc = std::max(1, (int)std::round(1.0f * bonusMult));
         score += inc;
     }
+    
+    box(win,0,0);
 
     wrefresh(win);
 
