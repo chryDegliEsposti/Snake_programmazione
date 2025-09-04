@@ -17,16 +17,19 @@ levels* levelGraphics::getLevelsList() {
 }
 
 levels::level* levelGraphics::selectLevel() {
+    
     const int levelHeight = RADIUS_CIRCLE_Y * 2 + 2;
     const int pad_h = std::max(maxy, levelHeight * l->size() + 2);
     WINDOW* my_pad = newpad(pad_h, maxx);
     int i = 1;
+
     for (levels::level* node = l->getHead(); node && i <= l->size(); node = node->next, ++i) {
+        mvwprintw(my_pad, 4, maxx/10, "q : quit");
         int y = i * levelHeight;
         drawFilledCircleWin(my_pad, y, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 1);
         wattron(my_pad, COLOR_PAIR(7));
         mvwprintw(my_pad, y - 1, maxx/2 - 6, "level: %d", node->num);
-        mvwprintw(my_pad, y,     maxx/2 - 15, "speed: %d  length: %d", node->vel, node->snakelen);
+        mvwprintw(my_pad, y,     maxx/2 - 10, "speed: %d  length: %d", node->vel, node->snakelen);
         wattroff(my_pad, COLOR_PAIR(7));
     }
 
@@ -43,11 +46,11 @@ levels::level* levelGraphics::selectLevel() {
     keypad(stdscr, TRUE);
     nodelay(stdscr, FALSE);
 
-    while ((c = getch()) != 'x') {
+    while ((c = getch()) != 'q') {
         drawFilledCircleWin(my_pad, selectedY, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 1);
         wattron(my_pad, COLOR_PAIR(7));
         mvwprintw(my_pad, selectedY - 1, maxx/2 - 6, "level: %d", currLev->num);
-        mvwprintw(my_pad, selectedY,     maxx/2 - 15, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
+        mvwprintw(my_pad, selectedY,     maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
         wattroff(my_pad, COLOR_PAIR(7));
 
         switch (c) {
@@ -72,12 +75,12 @@ levels::level* levelGraphics::selectLevel() {
         drawFilledCircleWin(my_pad, selectedY, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 5);
         wattron(my_pad, COLOR_PAIR(6));
         mvwprintw(my_pad, selectedY - 1, maxx/2 - 6, "level: %d", currLev->num);
-        mvwprintw(my_pad, selectedY,     maxx/2 - 15, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
+        mvwprintw(my_pad, selectedY,     maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
         wattroff(my_pad, COLOR_PAIR(6));
 
         prefresh(my_pad, pad_top, 0, 0, 0, maxy - 1, maxx - 1);
     }
 
     delwin(my_pad);
-    return l->getCurrLevel(); // se esci con 'x', tieni l'ultimo selezionato
+    return l->getCurrLevel(); // se esci con 'q', tieni l'ultimo selezionato
 }

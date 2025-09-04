@@ -78,6 +78,7 @@ int main(int, char**) {
             // usa currentLevel->num se vuoi salvare per livello
             scoreBoard::saveScore(currentLevel ? currentLevel->num - 1 : 0, dp, &toSerialize);
             scoreBoard::serialize(toSerialize);
+
         }
 
         if (choice == 2) {

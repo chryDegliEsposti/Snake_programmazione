@@ -15,11 +15,11 @@ int getMillis() {
 }
 
 static int deriveTickMsFromVel(int vel) {
-    // base 450ms, -12ms per punto vel, clamp a [60..600]
-    int ms = 450 - vel * 12;
-    return std::clamp(ms, 60, 600);
+    // base 400ms, - 6ms per punto vel, clamp a [5..600]
+    int ms = 400 - vel * 6;
+    return std::clamp(ms, 5, 600); //clamp assicura che ms rimanda nel range selezionato 
 }
-
+//TOUNDERSTAND
 Game::Game(const levels::level* levelCfg) : snake(levelCfg ? levelCfg->snakelen : 3, 5, 5), score(0), levelCfg(levelCfg)
 {
     if (levelCfg) {
@@ -58,16 +58,6 @@ bool Game::run(WINDOW*win){
     mvwprintw(win, snake.cibo->y, snake.cibo->x, "%c", snake.cibo->type);
     wrefresh(win);
 
-    // if(snake.x >= width-1 || snake.y >= height-1 || snake.x <= 0 || snake.y <= 0) {
-        
-    //     dbg::print_debug_hell_yeah("x=", snake.x, " y=", snake.y, " w=", width, " h=", height);
-
-    //     snake.x = snake.head->x;
-    //     snake.y = snake.head->y;
-        
-    // }
-    ///dbg::print_debug_hell_yeah("snake x=", snake.x, " snake y=", snake.y, " head x =", snake.head->x, " head y=", snake.head->y);
-    
     if(snake.x >= width-1){
         snake.x = 1;
     }
@@ -123,7 +113,7 @@ bool Game::run(WINDOW*win){
         int inc = std::max(1, (int)std::round(1.0f * bonusMult));
         score += inc;
     }
-    
+
     box(win,0,0);
 
     wrefresh(win);

@@ -75,16 +75,38 @@ void mainMenu::repaintAll(int max_x, int max_y, int selected){
     
 
     attron(COLOR_PAIR(selected == 1 ? 6 : 7));
-    int textLen = strlen(" _____ __    _____ __ __");
 
-    move(max_y/2-2, max_x/2-textLen/2);
-    printw(" _____ __    _____ __ __");
-    move(max_y/2-1, max_x/2-textLen/2);
-    printw("|  _  |  |  |  _  |  |  |");
-    move(max_y/2, max_x/2-textLen/2);
-    printw("|   __|  |__|     |_   _|");
-    move(max_y/2+1, max_x/2-textLen/2); 
-    printw("|__|  |_____|__|__| |_|");
+
+    std::string arr[][4] = {
+{
+" ___  ___ ___  ___ ___ ",
+"/ __|/ __/ _ \\| _ \\ __|",
+" \\__ \\ (_| (_) |   / _| ",
+" |___/\\___\\___/|_|_\\___|"
+},
+{
+" _____ __    _____ __ __",
+"|  _  |  |  |  _  |  |  |",
+"|   __|  |__|     |_   _|",
+"|__|  |_____|__|__| |_|"
+},
+{
+ " _    _____   _____ _  "  ,
+ "| |  | __\\ \\ / / __| |"   ,
+ "| |__| _| \\ V /| _|| |__" ,
+ "|____|___| \\_/ |___|____|"                         
+}
+    };
+    for(int i = 0; i < 3; i++){
+        int y = windArr[i].posY;
+        for(std::string s : arr[i]){
+            mvwprintw( stdscr, y-2, windArr[i].posX, s.c_str());
+            y++;
+        }
+    }
+
+
+                        
 
     attroff(COLOR_PAIR(selected == 2 ? 6 : 7));
 
