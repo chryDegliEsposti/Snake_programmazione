@@ -17,11 +17,11 @@ int getMillis() {
 }
 
 static int deriveTickMsFromVel(int vel) {
-    // base 400ms, - 6ms per punto vel, clamp a [5..600]
+    // la base è 450ms, poi -vel*8ms per ogni punto di velocità
     int ms = 450 - vel * 8;
     return ms;
 }
-//TOUNDERSTAND
+
 Game::Game(const levels::level* levelCfg) : snake(levelCfg ? levelCfg->snakelen : 3, 5, 5), score(0), levelCfg(levelCfg)
 {
     Game::isRunning = true;
@@ -36,8 +36,6 @@ Game::Game(const levels::level* levelCfg) : snake(levelCfg ? levelCfg->snakelen 
     }
 }
 
-
-
 WINDOW* Game::setBoard(int width, int height){
     int y = getmaxy(stdscr)/2-height/2;
     int x = getmaxx(stdscr)/2-width/2;
@@ -48,7 +46,7 @@ WINDOW* Game::setBoard(int width, int height){
     snake.setParam(width, height);
     snake.initSnake();
     
-    dbg::print_debug_hell_yeah("ora dopo l'init, controlliamo sta tail: x: ", snake.tail->x, "  y: ", snake.tail->y);
+    //dbg::print_debug("ora dopo l'init, controlliamo sta tail: x: ", snake.tail->x, "  y: ", snake.tail->y);
 
     box(win, 0,0);
     wrefresh(win);
@@ -56,7 +54,7 @@ WINDOW* Game::setBoard(int width, int height){
 }
 
 bool Game::run(WINDOW*win){
-    dbg::print_debug_hell_yeah("gameloop");
+    //dbg::print_debug("gameloop");
         
     mvwprintw(win, snake.cibo->y, snake.cibo->x, "%c", snake.cibo->type);
     wrefresh(win);
@@ -78,11 +76,11 @@ bool Game::run(WINDOW*win){
     Object* temp = snake.tail;
 
     do {
-        dbg::print_debug_hell_yeah("checking tail ", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
+        //dbg::print_debug("checking tail ", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
         if(temp->next == nullptr) break;
-        dbg::print_debug_hell_yeah("isnull ", temp->next->x); 
+        //dbg::print_debug("isnull ", temp->next->x); 
         if(temp->x == snake.x && temp->y == snake.y) {
-            dbg::print_debug_hell_yeah("tailBitten", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
+            //dbg::print_debug("tailBitten", " snake x: ", snake.x, ", snake y: ", snake.y, ". \ttail: ", " tail x: ", temp->x, ", tail y: ", temp->y);
             snake.x = snake.head->x;
             snake.y = snake.head->y;
             return false;
@@ -133,7 +131,6 @@ void Game::PauseGame(WINDOW* win) {
     mvwprintw(pauseMenu, getmaxy(pauseMenu)/2+2, getmaxx(pauseMenu)/2-5, "p : resume");
     wrefresh(pauseMenu);
 
-    //mvwprintw(pauseMenu, int, int, "p : resume");
     char c;
     while((c = getch()) != 'p') {
         if(c == 'q'){
@@ -141,7 +138,6 @@ void Game::PauseGame(WINDOW* win) {
             break;
         }
     }
-
 
     wclear(pauseMenu);
     wrefresh(pauseMenu);
@@ -153,7 +149,7 @@ char Game::getInput() {
     char lastInput = ERR;
     int i = 0;
     
-    dbg::print_debug_hell_yeah(tickMs);
+    //dbg::print_debug(tickMs);
     while((getMillis() - start) <= tickMs) {
         char temp = getch();
         if(temp != ERR)
@@ -177,15 +173,15 @@ char Game::inputAndMove(Snake *snake, WINDOW* win) {
 
 bool Game::checkTimer(int gameStartMillis,WINDOW* coverBox) {
 
-    dbg::print_debug_hell_yeah("millis: ",getMillis());
+    //dbg::print_debug("millis: ",getMillis());
     uint64_t elapsed = getMillis() - gameStartMillis;
     int remaining = MAX_TIME - elapsed;
     if(remaining < 0) remaining = 0;
-    dbg::print_debug_hell_yeah("remaining: ",remaining);
+    //dbg::print_debug("remaining: ",remaining);
     int mm = (remaining / 1000) / 60;
     int ss = (remaining / 1000) % 60;
-    dbg::print_debug_hell_yeah("mm: ",mm);
-    dbg::print_debug_hell_yeah("ss: ",ss);
+    //dbg::print_debug("mm: ",mm);
+    //dbg::print_debug("ss: ",ss);
 
     int y = getmaxy(stdscr)/2-height/2-1;
     mvwprintw(coverBox, y, getmaxx(coverBox)/2-width/2+2, "TIME : %02d:%02d", mm, ss);
@@ -193,8 +189,8 @@ bool Game::checkTimer(int gameStartMillis,WINDOW* coverBox) {
     mvwprintw(coverBox, y, getmaxx(coverBox)/2+width/2-12, "LEVEL : %d", currentLevelNum);
     wrefresh(coverBox);
 
-    if (getMillis() - gameStartMillis >= MAX_TIME) {// tempo scaduto
-        dbg::print_debug_hell_yeah("timeout!");
+    if (getMillis() - gameStartMillis >= MAX_TIME) {
+        //dbg::print_debug("timeout!");
         return false;
     }
     return true;
@@ -220,14 +216,13 @@ scoreBoard::DataPlayer Game::gameOver(WINDOW* win){
     wclear(win);
 
     box(win, 0, 0);
-
+                                            // raw string. ignora i \ qualsiasi cosa
     mvwprintw(win, height/2-6, (width/2)-36, R"(   _____      ___      __  __  ______  ____ __      __ ______  _____   )");
     mvwprintw(win, height/2-5, (width/2)-36, R"(  / ____|    /   \    |  \/  ||  ____|/ __ \\ \    / /|  ____||  __ \  )");
     mvwprintw(win, height/2-4, (width/2)-36, R"( | |  __    /  ^  \   | \  / || |__  | |  | |\ \  / / | |__   | |__) | )");
     mvwprintw(win, height/2-3, (width/2)-36, R"( | | |_ |  /  /_\  \  | |\/| ||  __| | |  | | \ \/ /  |  __|  |  _  /  )");
     mvwprintw(win, height/2-2, (width/2)-36, R"( | |__| | /  _____  \ | |  | || |____| |__| |  \  /   | |____ | | \ \  )");
     mvwprintw(win, height/2-1, (width/2)-36, R"(  \_____|/__/     \__\|_|  |_||______|\____/    \/    |______||_|  \_\ )");
-
     
     echo();
     mvwprintw(win, height/2+1, (width/2-19), "insert your name to save score : ");
@@ -237,9 +232,6 @@ scoreBoard::DataPlayer Game::gameOver(WINDOW* win){
     strncpy(dp.name, str, 4);
     dp.score = score;
     noecho();
-
-        // gameOver(win);
-        // mvwprintw(win, max_y*0.6-2, max_x/2, "max 3 charachters");
 
     return dp;
 }

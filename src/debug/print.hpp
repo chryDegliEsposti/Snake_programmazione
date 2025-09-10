@@ -1,4 +1,3 @@
-// ######################### cri debug da qui #######################
 #pragma once
 #include <iostream>
 #include <fstream>
@@ -30,7 +29,7 @@ inline std::ofstream& getLogStream() {
 }
 
 template <typename... Args>
-inline void print_debug_hell_yeah(Args&&... args) {
+inline void print_debug(Args&&... args) {
     auto& out = getLogStream();
     if (!out) { std::cerr << "Impossibile aprire log.txt\n"; return; }
     out << "[" << currentTimestamp() << "] ";
@@ -38,5 +37,4 @@ inline void print_debug_hell_yeah(Args&&... args) {
     out.flush();
 }
 
-} // namespace dbg
-// ######################### a qui #######################
+}

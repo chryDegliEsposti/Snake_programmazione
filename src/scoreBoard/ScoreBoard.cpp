@@ -22,23 +22,17 @@ void scoreBoard::saveScore(int level, DataPlayer score, scoreBoard*scoreboard) {
 
     DataPlayer* top = scoreboard->levelScores[level];
     int pos = 10;
-    for (int i = 0; i < 10; ++i) {
-        bool emptySlot = (top[i].name[0] == '\0' && top[i].score == 0);
-
-        if (emptySlot || score.score > top[i].score) {
+    for(int i = 0; i < 10; i++) {
+        if((top[i].name[0] == '\0' && top[i].score == 0) || score.score > top[i].score) {
             pos = i;
             break;
         }
     }
 
-    if (pos >= 10) {
-        return;
-    }
+    if (pos >= 10) return;
 
-    for (int j = 9; j > pos; --j) {
+    for (int j = 9; j > pos; j--)
         top[j] = top[j - 1];
-    }
-
     top[pos] = score;
 }
 
@@ -58,23 +52,23 @@ void scoreBoard::printData(scoreBoard scoreboard, int level, WINDOW* win) {
     if (title_x < 1) title_x = 1;
     mvwprintw(win, 3, title_x, "%s", title);
 
-    const int left   = 2;
+    const int left = 2;
     const int rank_c = left;
     const int name_c = left + 6;
     const int score_c = w - 10;
 
     // header
-    mvwprintw(win, 5, rank_c,  "RANK");
-    mvwprintw(win, 5, name_c,  "NAME");
+    mvwprintw(win, 5, rank_c, "RANK");
+    mvwprintw(win, 5, name_c, "NAME");
     mvwprintw(win, 5, score_c, "SCORE");
 
     // riga orizzontale sotto l'header
     mvwhline(win, 6, 1, 0, w - 2);
 
-    for (int i = 0; i < 10; ++i) {
+    for(int i = 0; i < 10; ++i) {
         const DataPlayer& p = scoreboard.levelScores[level][i];
 
-        const char* name = (p.name[0] ? p.name : "---");
+        const char*name = (p.name[0] ? p.name : "---");
 
         int row = 8 + i;
 

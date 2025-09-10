@@ -4,12 +4,13 @@
 #include <stdlib.h>
 #include <ncurses.h>
 
-    struct Object {
-        Object*next;
-        int y;
-        int x;
-        char type;
-    };
+struct Object {
+    Object*next;
+    int y;
+    int x;
+    char type;
+};
+
 class Snake{
     public:
 

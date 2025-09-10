@@ -28,7 +28,7 @@ levels::level* levelGraphics::selectLevel() {
         drawFilledCircleWin(my_pad, y, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 1);
         wattron(my_pad, COLOR_PAIR(7));
         mvwprintw(my_pad, y - 1, maxx/2 - 6, "level: %d", node->num);
-        mvwprintw(my_pad, y,     maxx/2 - 10, "speed: %d  length: %d", node->vel, node->snakelen);
+        mvwprintw(my_pad, y, maxx/2 - 10, "speed: %d  length: %d", node->vel, node->snakelen);
         wattroff(my_pad, COLOR_PAIR(7));
     }
 
@@ -37,7 +37,7 @@ levels::level* levelGraphics::selectLevel() {
 
     int pad_top = 0;
 
-    levels::level* currLev = l->goToLevel(levelCounter); // qui si', voglio aggiornare curr
+    levels::level* currLev = l->goToLevel(levelCounter); // qui voglio aggiornare curr
     prefresh(my_pad, pad_top, 0, 0, 0, maxy - 1, maxx - 1);
 
     int selectedY = levelCounter * levelHeight;
@@ -49,22 +49,24 @@ levels::level* levelGraphics::selectLevel() {
         drawFilledCircleWin(my_pad, selectedY, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 1);
         wattron(my_pad, COLOR_PAIR(7));
         mvwprintw(my_pad, selectedY - 1, maxx/2 - 6, "level: %d", currLev->num);
-        mvwprintw(my_pad, selectedY,     maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
+        mvwprintw(my_pad, selectedY, maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
         wattroff(my_pad, COLOR_PAIR(7));
 
         switch (c) {
-            case KEY_DOWN: if (levelCounter < l->size()) ++levelCounter; break;
-            case KEY_UP:   if (levelCounter > 1)          --levelCounter; break;
+            case KEY_DOWN:
+                if (levelCounter < l->size()) levelCounter++; break;
+            case KEY_UP:
+                if (levelCounter > 1) levelCounter--; break;
             case '\n':
                 delwin(my_pad);
                 return l->goToLevel(levelCounter);
         }
 
-        currLev   = l->goToLevel(levelCounter);
+        currLev = l->goToLevel(levelCounter);
         selectedY = levelCounter * levelHeight;
 
         // scrolling
-        if (selectedY - pad_top > maxy - 5) {
+        if(selectedY - pad_top > maxy - 5) {
             pad_top = selectedY - maxy + 5;
         } else if (selectedY < pad_top + 5) {
             pad_top = std::max(0, selectedY - 5);
@@ -74,7 +76,7 @@ levels::level* levelGraphics::selectLevel() {
         drawFilledCircleWin(my_pad, selectedY, maxx/2, RADIUS_CIRCLE_X, RADIUS_CIRCLE_Y, 5);
         wattron(my_pad, COLOR_PAIR(6));
         mvwprintw(my_pad, selectedY - 1, maxx/2 - 6, "level: %d", currLev->num);
-        mvwprintw(my_pad, selectedY,     maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
+        mvwprintw(my_pad, selectedY, maxx/2 - 10, "speed: %d  length: %d", currLev->vel, currLev->snakelen);
         wattroff(my_pad, COLOR_PAIR(6));
 
         prefresh(my_pad, pad_top, 0, 0, 0, maxy - 1, maxx - 1);

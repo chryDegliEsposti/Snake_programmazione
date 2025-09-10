@@ -17,10 +17,10 @@ const static int RADIUS_CIRCLE_Y = 3;
 void mainMenu::init_colorPairs() {
     //fare paring colori 
     init_color(COLOR_DARK_GREEN, 75,378, 154 );
-    init_pair(1, COLOR_GREEN,  COLOR_GREEN);   // green
-    init_pair(2, COLOR_WHITE,  COLOR_WHITE);     // White
-    init_pair(3, COLOR_BLACK,  COLOR_BLACK);     // Black
-    init_pair(4, COLOR_RED,    COLOR_RED);       // red 
+    init_pair(1, COLOR_GREEN, COLOR_GREEN);   // green
+    init_pair(2, COLOR_WHITE, COLOR_WHITE);     // White
+    init_pair(3, COLOR_BLACK, COLOR_BLACK);     // Black
+    init_pair(4, COLOR_RED, COLOR_RED);       // red 
     init_pair(5, COLOR_DARK_GREEN, COLOR_DARK_GREEN);
     init_pair(6, COLOR_BLACK, COLOR_DARK_GREEN);
     init_pair(7, COLOR_BLACK, COLOR_GREEN);
@@ -172,7 +172,7 @@ void mainMenu::drawVerticalSnake(int startY) {
 int mainMenu::page(int max_x,int max_y){
     keypad(stdscr, TRUE);
 
-    int c; //getch of the button pressd 
+    int c;
     int numchoice = 0;
 
     int numSegments = (max_x/3)/SNAKE_BODY_W-1;
@@ -234,7 +234,7 @@ int mainMenu::mainPage(){
     getmaxyx(stdscr, max_y, max_x); // Get screen size
     WINDOW* ret = new_bordered_window(max_y , max_x , 0,0);
 
-    start_color();          // attivare colori
+    start_color();          // attiva colori
 
     initPage(max_x, max_y);
     return(page( max_x,  max_y));

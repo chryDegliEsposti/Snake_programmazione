@@ -22,7 +22,6 @@ class scoreBoard {
     };
     DataPlayer levelScores[30][10];
 
-
     static void serialize(scoreBoard scoreboard);
     static void deserialize(scoreBoard*scoreboard);
     static void saveScore(int level, DataPlayer score, scoreBoard*scoreboard);

@@ -6,8 +6,8 @@ using namespace std;
 
 void init(){
     initscr();
-    cbreak(); //serve per disabilitare "terminal line buffering"
-    noecho(); //previene l'eco tra caratteri
+    cbreak();
+    noecho(); // non riscrive cio' che premi sul terminale
     curs_set(0); //visibilità schermo
 }
 
@@ -23,7 +23,7 @@ void drawFilledCircle(int center_y, int center_x, int radius_x, int radius_y,int
 
         for (int y = center_y - radius_y; y <= center_y + radius_y; y++) {
             for (int x = center_x - radius_x; x <= center_x + radius_x; x++) {
-                //formula utilizzata = (x-x_center)^2/radius_x^2 + (y-y_center)^2/radius_y^2 >= 1 (formula ellisse)
+                // formula usata: (x-x_center)^2/radius_x^2 + (y-y_center)^2/radius_y^2 >= 1 (formula dell'ellisse)
                 double dx = x - center_x;
                 double dy = y - center_y;
 
@@ -42,7 +42,7 @@ void drawFilledCircleWin(WINDOW* win, int center_y, int center_x, int radius_x, 
 
         for (int y = center_y - radius_y; y <= center_y + radius_y; y++) {
             for (int x = center_x - radius_x; x <= center_x + radius_x; x++) {
-                //formula utilizzata = (x-x_center)^2/radius_x^2 + (y-y_center)^2/radius_y^2 >= 1 (formula ellisse)
+                // formula usata: (x-x_center)^2/radius_x^2 + (y-y_center)^2/radius_y^2 >= 1 (formula dell'ellisse)
                 double dx = x - center_x;
                 double dy = y - center_y;
 

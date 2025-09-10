@@ -10,21 +10,21 @@ void levels::addLevel(int num, int vel, float bonus, int snakelen) {
         newLevel->before = tail;
         tail = newLevel;
     }
-    ++count;
+    count++;
 }
 
 void levels::addAllLevels(int numLastLevel) {
-    int   currNum  = 1;
-    float vel      = 10;
-    float bonus    = 1.2f;
+    int currNum = 1;
+    float vel = 10;
+    float bonus = 1.2f;
     float snakelen = 3;
 
     while (currNum <= numLastLevel) {
         addLevel(currNum, (int)vel, bonus, (int)snakelen);
-        ++currNum;
-        vel      += 3;
-        bonus    += 0.2f;
-        snakelen+=0.75;
+        currNum++;
+        vel += 3;
+        bonus += 0.2f;
+        snakelen +=0.75;
     }
 }
 
@@ -34,7 +34,7 @@ levels::levels(int numLastLevel) {
 
 levels::~levels() {
     level* it = head;
-    while (it) {
+    while (it) {    // per ogni elemento nella lista, rimuoviamo dall'heap
         level* nxt = it->next;
         delete it;
         it = nxt;

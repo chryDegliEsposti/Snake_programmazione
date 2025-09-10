@@ -32,10 +32,10 @@ public:
     static bool isRunning;
 
     // info livello
-    const levels::level* levelCfg = nullptr; // non-owning
-    int  currentLevelNum = 1;
-    int  tickMs = 500;       // velocità di gioco derivata da levelCfg->vel
-    float bonusMult = 1.0f;  // moltiplicatore punteggio da levelCfg->bonus
+    const levels::level* levelCfg = nullptr;
+    int currentLevelNum = 1;
+    int tickMs = 500;
+    float bonusMult = 1.0f;
 
     WINDOW* setBoard(int width, int height);
     scoreBoard::DataPlayer gameOver(WINDOW* win);

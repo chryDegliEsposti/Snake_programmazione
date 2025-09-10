@@ -44,7 +44,7 @@ void Snake::initSnake(){
     for(int i = 0; i < snakeSize; i++) {
         Object*body = new Object{tail, y, x-i, 'o'};
         tail = body;
-        dbg::print_debug_hell_yeah("snake init #", i, " tail.x = ", tail->x);
+        //dbg::print_debug("snake init #", i, " tail.x = ", tail->x);
     }
     this->cibo = new Object{nullptr, 0, 0, 'a'};
     generateFood();

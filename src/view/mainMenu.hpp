@@ -15,7 +15,6 @@
 class mainMenu {
     public:
 
-    // snake pattern testa: 8 righe x 14 cols
     static const int SNAKE_HEAD_H = 8;
     static const int SNAKE_HEAD_W = 14;
     static constexpr int SNAKE_HEAD[SNAKE_HEAD_H][SNAKE_HEAD_W] = {
@@ -30,8 +29,6 @@ class mainMenu {
     {          0,0,5,5,5,5,5,5,5,0, 0, 0, 0, 0 }   
     };
 
-    // Snake pattern del corpo: 8 righe x 10 cols
-    // "1" (verde) per bordi e "2" (binaco) per l'interno
     static const int SNAKE_BODY_H = 4;
     static const int SNAKE_BODY_W = 15;
     static constexpr int SNAKE_BODY[SNAKE_BODY_H][SNAKE_BODY_W] = 

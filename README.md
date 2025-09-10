@@ -39,13 +39,13 @@ Il gioco è una versione del classico Snake, implementato con un'interfaccia a r
 2.  **Compilare il progetto**:
     Navigare nella directory principale del progetto ed eseguire il seguente comando per compilare tutti i file sorgente e creare l'eseguibile:
     ```bash
-    g++ -std=c++17 src/**/*.cpp -o snake_game -lncurses
+    make
     ```
 
 3.  **Eseguire il gioco**:
     Dopo la compilazione, avviare il gioco con:
     ```bash
-    ./snake_game
+    ./app
     ```
 
 ## Struttura del Progetto

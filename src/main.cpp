@@ -19,7 +19,7 @@ static scoreBoard::DataPlayer makeP(const char* n, int s) {
     scoreBoard::DataPlayer p{};
     std::strncpy(p.name, n, 3);
     p.name[3] = '\0';
-    p.score   = s;
+    p.score = s;
     return p;
 }
 
@@ -36,7 +36,7 @@ void fillScoreboardWithDummyData() {
 }
 
 int main(int, char**) {
-    // debug
+    // per debug gdb
     std::cout << "PID: " << getpid() << "\n";
     std::cin.get();
 
@@ -47,7 +47,6 @@ int main(int, char**) {
     init();
 
     int choice = mainMenu::mainPage();
-    Game game(0);
 
     while (choice != -1) {
 
@@ -74,16 +73,15 @@ int main(int, char**) {
             
             scoreBoard::DataPlayer dp = game.gameOver(win);
             scoreBoard toSerialize;
-            // usa currentLevel->num se vuoi salvare per livello
-            scoreBoard::saveScore(currentLevel ? currentLevel->num - 1 : 0, dp, &toSerialize);
+
+            scoreBoard::saveScore(currentLevel->num, dp, &toSerialize);
             scoreBoard::serialize(toSerialize);
 
         }
 
         if (choice == 2) {
-            levelGraphics lg{lvlList};            // NON alloca livelli nuovi
-            currentLevel = lg.selectLevel();      // scegli e mantieni il puntatore valido
-            // qui puoi usare currentLevel->vel / snakelen per configurare il Game
+            levelGraphics lg{lvlList};
+            currentLevel = lg.selectLevel();
         }
 
         choice = mainMenu::mainPage();
